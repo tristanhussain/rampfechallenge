@@ -16,7 +16,16 @@ export function useTransactionsByEmployee(): TransactionsByEmployeeResult {
         }
       )
 
-      setTransactionsByEmployee(data)
+      setTransactionsByEmployee((previousTransactions) => {
+        if (!previousTransactions) return data
+        // Map the new data to preserve any existing transaction's approved state
+        return data.map((transaction) => {
+          const existingTransaction = previousTransactions.find(
+            (prevTransaction) => prevTransaction.id === transaction.id
+          )
+          return existingTransaction || transaction
+        })
+      })
     },
     [fetchWithCache]
   )

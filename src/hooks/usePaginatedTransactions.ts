@@ -21,8 +21,15 @@ export function usePaginatedTransactions(): PaginatedTransactionsResult {
       if (response === null || previousResponse === null) {
         return response
       }
+      const newData = response.data.map((transaction) => {
+        const existingTransaction = previousResponse.data.find(
+          (prevTransaction) => prevTransaction.id === transaction.id
+        )
+        return existingTransaction || transaction
+      })
+
       return {
-        data: [...previousResponse.data, ...response.data],
+        data: newData,
         nextPage: response.nextPage,
       }
     })

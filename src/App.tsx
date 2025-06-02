@@ -10,7 +10,11 @@ import { Employee } from "./utils/types"
 
 export function App() {
   const { data: employees, loading: employeesLoading, ...employeeUtils } = useEmployees()
-  const { data: paginatedTransactions, ...paginatedTransactionsUtils } = usePaginatedTransactions()
+  const {
+    data: paginatedTransactions,
+    loading: paginatedTransactionsLoading,
+    ...paginatedTransactionsUtils
+  } = usePaginatedTransactions()
   const { data: transactionsByEmployee, ...transactionsByEmployeeUtils } = useTransactionsByEmployee()
   const [setIsLoading] = useState(false)
 
@@ -75,17 +79,19 @@ export function App() {
         <div className="RampGrid">
           <Transactions transactions={transactions} />
 
-          {transactions !== null && (
-            <button
-              className="RampButton"
-              disabled={paginatedTransactionsUtils.loading}
-              onClick={async () => {
-                await paginatedTransactionsUtils.fetchAll()
-              }}
-            >
-              View More
-            </button>
-          )}
+          {transactions !== null &&
+            !transactionsByEmployee &&
+            paginatedTransactions?.nextPage !== null && (
+              <button
+                className="RampButton"
+                disabled={paginatedTransactionsUtils.loading}
+                onClick={async () => {
+                  await paginatedTransactionsUtils.fetchAll()
+                }}
+              >
+                View More
+              </button>
+            )}
         </div>
       </main>
     </Fragment>
